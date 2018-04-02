@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body class="light-blue darken-4">
+
+    <div id="modal1" class="modal rounded">
+        <div class="modal-content">
+            <h1 class="center"><b>1337 Chat</b></h1>
+            <h4 class="center">Where only the best come to chat</h4>
+            <div class="row">
+                <div style="display: none;" class="rounded col s10 offset-s1 error red lighten-4">
+                    <p><b>Following errors have occured:</b></p>
+                    <p style="display: none;" id="error1">Username invalid or already in use.</p>
+                    <p style="display: none;" id="error2">Password of the server was not correct.</p>
+                </div>
+            </div>
+            <form class="row" id="login">
+                <div class="row">
+                    <p class="col s11 offset-s1">Please enter your desired username: </p>
+                    <div class="input-field col s10 offset-s1">
+                        <i class="material-icons prefix">perm_identity</i>
+                        <input id="username" type="text" placeholder="" autocomplete="off">
+                        <label for="usename">Username</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <p class="col s11 offset-s1">Please enter the server's password:</p>
+                    <div class="input-field col s10 offset-s1">
+                        <i class="material-icons prefix">lock_outline</i>
+                        <input id="password" type="password" placeholder="">
+                        <label for="password" data-error="wrong password!">Password</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button class="btn-large col s8 offset-s2" type="submit">Login</button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <div id="blur-out">
+        <nav>
+            <div id="navbar" class="nav-wrapper light-blue darken-4">
+                <a href="#" class="brand-logo center "><i class="large material-icons">language</i> 1337 Chat</a>
+            </div>
+        </nav>
+
+        <div class="row s12" id="output">
+            <div class="col s3 grey darken-4" id="us">
+                <h5 id="eh" style="color: white;">Online users <span id="userCount"> (0)</span>:</h5>
+                <ul id="users">
+                </ul>
+            </div>
+
+            <div class="col s9 white" style="padding: 0;">
+
+                <ul id="messages">
+                </ul>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="row">
+
+            <form action="submit" class="col s12 white" style="bottom: 0; position: fixed; padding-top: 10px; border-top: 1px solid #212121" id="sendMessage">
+                <div id="above">
+                    <div id="loggedinas">Currently logged in as: <b id="cl" style="display: relative; margin:0;"></b></div>
+                    <div class="emojis">
+                        <div id="smiley">😃</div>
+                        <div id="grin">😁</div>
+                        <div id="xD">😆</div>
+                        <div id="kiss">😘</div>
+                        <div id="laugh">😂</div>
+                        <div id="frown">☹️</div>
+                    </div>
+
+                    <span id="typing" style="display: none; width: 20%; float:right; text-align: right;">A user is typing...</span>
+                </div>
+
+
+                <input type="text" placeholder="Enter message here..." class="col s10" style="margin-bottom: 10px;" id="message" autocomplete="off">
+
+                <button class="btn col s2" type="submit"><i class="material-icons right">send</i>Send</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        function resize() {
+            $('#output').innerHeight(window.innerHeight - $('#sendMessage').outerHeight() - $('#navbar').outerHeight());
+            $('#messages').height($('#output').height());
+            $('#users').outerHeight($('#output').height() - $('#eh').height());
+
+            $('#above').width($('#us').outerWidth() - $('#sendMessage').css('margin-left'));
+
+            $('#loggedinas').outerWidth($('#us').outerWidth());
+
+        }
+
+        $('#smiley').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "😃");
+        });
+        $('#grin').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "😁");
+        });
+        $('#xD').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "😆");
+        });
+        $('#kiss').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "😘");
+        });
+        $('#laugh').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "😂");
+        });
+        $('#frown').click(function () {
+            var msg = $('#message').val();
+            $('#message').val(msg + "☹️");
+        });
+
+        $(window).on('load', resize);
+        $(window).on('resize', resize);
+
+        $(document).ready(function () {
+            $('.modal').modal({
+                dismissible: false
+            });
+            $('.modal').modal('open');
+            $('#blur-out').addClass('blur');
+        });
+
+        var socket = io();
+
+        var loggedIn = false;
+
+        socket.on('refresh', function () {
+            location.reload();
+        });
+
+        socket.on('scrolldown', function () {
+            $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        });
+
+
+        socket.on('userlist', function (users) {
+            if (loggedIn === true) {
+                $('#users').empty();
+                for (var i = 0; i < users.length; i++) {
+                    $('#users').append($('<li>').text(users[i]));
+                }
+                $('#userCount').html(function () {
+                    var counter = 0;
+                    for (var i = 0; i < users.length; i++) {
+                        counter++
+                    }
+                    return "(" + counter + ")";
+                });
+            }
+        });
+
+        socket.on('currentLogin', function (user) {
+            $('#cl').html(user);
+        })
+
+        $('#login').submit(function () {
+            var loginData = {
+                username: $('#username').val(),
+                password: $('#password').val(),
+            }
+            socket.emit('login', loginData);
+            return false;
+        });
+
+        socket.on('authenticate', function () {
+            $('.modal').modal('close');
+            $('#blur-out').removeClass('blur');
+            loggedIn = true;
+
+        });
+
+        socket.on('invalidUser', function () {
+            $('#password').switchClass("invalid", "valid", 400, "easeInOutQuad");
+
+            $('#error2').slideUp();
+            $('#error1').slideDown();
+            $('.error').slideDown();
+
+            $('#username').switchClass("valid", "invalid", 400, "easeInOutQuad");
+        });
+
+        socket.on('invalidPass', function () {
+
+            $('#username').switchClass("invalid", "valid", 400, "easeInOutQuad");
+
+            $('#error1').slideUp();
+            $('#error2').slideDown();
+            $('.error').slideDown();
+
+            $('#password').switchClass("valid", "invalid", 400, "easeInOutQuad");
+        });
+
+        socket.on('invalidBoth', function () {
+            $('#error1').slideDown();
+            $('#error2').slideDown();
+            $('.error').slideDown();
+
+            $('#username').switchClass("valid", "invalid", 400, "easeInOutQuad");
+            $('#password').switchClass("valid", "invalid", 400, "easeInOutQuad");
+        });
+
+        $('#sendMessage').submit(function () {
+            socket.emit('messageToServer', $('#message').val());
+            $('#message').val('');
+            setTimeout(function () {
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+            }, 500)
+            return false;
+
+        });
+
+        socket.on('resetPosition', function () {
+            socket.emit('resetPosition');
+        });
+
+        socket.on('messageToChat', function (msg) {
+            if (loggedIn === true) {
+                $('#messages').html('');
+                for (var i = 0; i < msg.length; i++) {
+                    $('#messages').append(function () {
+
+                        if (msg[i].type === "message") {
+                            var prefix = "<b>" + msg[i].prefix + " says: </b>";
+                            var message = msg[i].message;
+                            var finish = "<li>" + prefix + "<br>" + message + "</li>";
+                            return finish;
+                        } else if (msg[i].type === "connectionAlert") {
+                            var prefix = '<li class="in"> user <b>"';
+                            var suffix = '"</b> has connected.</li>';
+                            var finish = prefix + msg[i].message + suffix;
+                            return finish;
+                        } else if (msg[i].type === "disconnectionAlert") {
+                            var prefix = 'user <b>"';
+                            var suffix = '"</b> has disconnected.';
+                            var finish = "<li class ='out'>" + prefix + msg[i].message + suffix + "</li>";
+                            return finish;
+                        }
+
+                    });
+                };
+
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+            }
+        });
+
+        var timeoutfunction = undefined;
+        var typing = -
+            $('#message').on('keyup', function () {
+                socket.emit('typing');
+                clearTimeout(timeoutfunction);
+                timeoutfunction = setTimeout(function () {
+                    socket.emit("stopped typing");
+                }, 1500);
+            });
+
+        socket.on("typing", function (user) {
+            $('#typing').show("slide", {
+                direction: "up"
+            }, 600);
+        });
+
+        socket.on("stopped typing", function (user) {
+            $('#typing').hide("slide", {
+                direction: "down"
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

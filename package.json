@@ -1,0 +1,19 @@
+{
+  "name": "skilaverkefni",
+  "version": "1.0.0",
+  "description": "",
+  "main": "chat.js",
+  "scripts": {
+    "start": "node chat.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3",
+    "trim": "0.0.1"
+  },
+  "engines" : { 
+    "node" : "*" 
+  }
+}
