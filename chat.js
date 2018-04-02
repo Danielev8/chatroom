@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var port = process.env.PORT || 8080;
 var users = [];
 var chatlog = [];
 var servPass = 1234;
@@ -159,6 +160,6 @@ io.on('connection', function (client) {
 
 });
 
-server.listen(5000, function () {
-    console.log('Server listening at port 5000');
+server.listen(port, function () {
+    console.log('Server listening at port 8080');
 });
