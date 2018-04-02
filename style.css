@@ -1,0 +1,117 @@
+html,
+body {
+    height: 100%;
+}
+
+.rounded {
+    border-radius: 20px;
+}
+
+#users {
+    overflow: auto;
+    padding-bottom: 5px;
+    color: white;
+}
+
+#output {
+    margin: 0;
+}
+
+#messages {
+    overflow: auto;
+    padding: 0;
+    padding-bottom: 5px;
+}
+
+ul {
+    margin: 0;
+    overflow: auto;
+}
+
+li {
+    word-wrap: break-word;
+}
+
+#messages li {
+    padding: 0 10px;
+}
+
+#messages li:nth-child(2n+1) {
+    background-color: #eee;
+}
+
+.emojis {
+    display: inline-block;
+}
+
+#loggedinas {
+    float:left;
+}
+.emojis div {
+    margin-right: 10px;
+    float: left;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#modal1::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+#modal1::-webkit-scrollbar {
+    width: 17px;
+    background-color: #F5F5F5;
+}
+
+#modal1::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #A9A9A9;
+}
+
+#messages::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+#messages::-webkit-scrollbar {
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+#messages::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #A9A9A9;
+}
+
+.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
+
+.error {
+    color: #b71c1c;
+}
+
+.in {
+    background-color: #a5d6a7 !important;
+}
+
+.out {
+    background-color: #e53935 !important;
+}
+
+#modal1 {
+    max-height: 80% !important;
+}
