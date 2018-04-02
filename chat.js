@@ -159,6 +159,6 @@ io.on('connection', function (client) {
 
 });
 
-server.listen(8080, function () {
-    console.log('Server listening at port 80');
+server.listen(5000, function () {
+    console.log('Server listening at port 5000');
 });
